@@ -1,0 +1,37 @@
+<project default="dist" basedir=".">
+	<target name="read">
+		<property file="${basedir}/common.properties"/>
+	</target>	
+
+    <target name="clean" depends="read">   
+        <ant dir="${basedir}/dependencygraph" inheritall="true" target="clean"/>
+	<ant dir="${basedir}/expect" inheritall="true" target="clean"/>
+	<ant dir="${basedir}/util" inheritall="true" target="clean"/>
+    	<ant dir="${basedir}/intervalTimer" inheritall="true" target="clean"/>    	
+	<ant dir="${basedir}/listenerService" inheritall="true" target="clean"/>
+	<ant dir="${basedir}/property" inheritall="true" target="clean"/>
+    	<ant dir="${basedir}/reactor" inheritall="true" target="clean"/>
+    	<ant dir="${basedir}/stateService" inheritall="true" target="clean"/>
+    	<ant dir="${basedir}/subscriptionTree" inheritall="true" target="clean"/>
+    	<ant dir="${basedir}/transport" inheritall="true" target="clean"/>
+	<delete dir="${basedir}/${lib.dir.name}/${dist.dir.name}"/>
+    </target>
+	
+	<target name="dist" depends="read">
+	<mkdir dir="${basedir}/${lib.dir.name}/${dist.dir.name}"/>
+	<ant dir="${basedir}/dependencygraph" inheritall="true" target="dist"/>
+	<ant dir="${basedir}/expect" inheritall="true" target="dist"/>
+	<ant dir="${basedir}/util" inheritall="true" target="dist"/>
+	<ant dir="${basedir}/intervalTimer" inheritall="true" target="dist"/>
+	<ant dir="${basedir}/listenerService" inheritall="true" target="dist"/>
+	<ant dir="${basedir}/property" inheritall="true" target="dist"/>
+	<ant dir="${basedir}/reactor" inheritall="true" target="dist"/>
+	<ant dir="${basedir}/stateService" inheritall="true" target="dist"/>
+	<ant dir="${basedir}/subscriptionTree" inheritall="true" target="dist"/>
+	<ant dir="${basedir}/transport" inheritall="true" target="dist"/>
+    </target>
+
+	<target name="zip" depends="dist">
+		<ant dir="${basedir}/impulse" inheritall="true" target="zip"/>
+    </target>
+</project>

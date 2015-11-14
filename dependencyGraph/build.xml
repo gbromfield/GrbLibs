@@ -1,0 +1,90 @@
+<project name="GRB Dependency Graph" default="dist" basedir="." >
+		
+	<target name="read">
+		<property file="${basedir}/../common.properties"/>
+		<property file="${basedir}/build.properties"/>
+		<path id="project.classpath">  
+		  <fileset dir="${output.lib.dir}">
+		    <include name="*.jar"/>                                                  
+		  </fileset>    
+	    </path>
+	</target>	
+	
+	<target name="init" depends="read">
+    	<mkdir dir="${basedir}/${output.dir.name}"/>
+
+    	<copy todir="${basedir}/${compile.tempsrc.dir.name}">
+    		<fileset dir="src"/>
+    	</copy>
+    </target>	
+
+    <target name="compile" depends="init">   
+        <javac  
+				source="${compile.source}"
+        		target="${compile.target}"
+			    debug="${compile.debug}" 
+        	    optimize="${compile.optimize}" 
+        	    srcdir="${basedir}/${compile.tempsrc.dir.name}" destdir="${basedir}/${output.dir.name}" 
+        	    includes="" excludes="**/test/*">
+       	        <classpath refid="project.classpath"/>
+        </javac>
+    </target>
+	
+	<target name="docs" depends="init" description="builds javadocs">
+		  <mkdir dir="${basedir}/${docs.dir.name}/docs/api"/>	
+		  <javadoc
+		  		   destdir="${basedir}/${docs.dir.name}/docs/api"
+		           author="false"
+		           version="true"
+		           use="true"
+		           windowtitle="${javadoc.window.title}"
+		  	       public="true"
+		  	       protected="false"
+				   private="false"
+		  	       overview="${basedir}/docs/specs/Overview.html">
+            <fileset dir="${basedir}/src" defaultexcludes="no">
+           		<exclude name="**/test/*.java" />
+	        </fileset>
+		    <doctitle><![CDATA[<h1>${javadoc.title}</h1>]]></doctitle>
+		    <bottom><![CDATA[${javadoc.bottom}]]></bottom>
+		    <group title="${javadoc.group.title}" packages="${javadoc.packages}"/>
+		  </javadoc>		
+	</target>	
+	
+	<target name="build" depends="compile" description="build to a jar">
+		<mkdir dir="${basedir}/${build.dir.name}"/>
+		<jar destfile="${basedir}/${build.dir.name}/${jar.name}">
+			<fileset dir="${basedir}/${output.dir.name}">
+			</fileset>
+			<manifest>
+                <section name="${manifest.section.name}">
+                    <attribute name="Specification-Title" value="${manifest.specification-title}"/>
+                    <attribute name="Specification-Version" value="${manifest.specification-version}"/>
+                    <attribute name="Specification-Vendor" value="${manifest.specification-vendor}"/>
+                    <attribute name="Implementation-Title" value="${manifest.implementation-title}"/>
+                    <attribute name="Implementation-Version" value="${manifest.implementation-version}"/>
+                    <attribute name="Implementation-Vendor" value="${manifest.implementation-vendor}"/>
+                </section>
+            </manifest>
+		</jar>
+		<echo> created ${basedir}/${build.dir.name}/${jar.name}</echo>
+	</target>
+
+	<target name="dist" depends="build" description="distribute jar to the lib directory nad generate docs">
+    	<copy todir="${basedir}/${output.lib.dir}">
+    		<fileset dir="${basedir}/${build.dir.name}"/>
+    	</copy>
+	</target>
+
+	<target name="all" depends="dist,docs" description="distribute jar to the lib directory">
+	</target>
+
+	<target name="clean" depends="read" description="cleans output">
+		<delete dir="${basedir}/${output.dir.name}"/>
+		<delete dir="${basedir}/${tempsrc.dir.name}"/>
+		<delete dir="${basedir}/${docs.dir.name}"/>
+		<delete dir="${basedir}/${build.dir.name}"/>
+		<delete file="${basedir}/${output.lib.dir}/${jar.name}"/>
+	</target>	
+	
+</project>		
